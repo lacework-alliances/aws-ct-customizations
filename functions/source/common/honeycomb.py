@@ -17,11 +17,11 @@ def send_honeycomb_event(honey_key, dataset, version, account, event, subaccount
             "account": "{}",
             "sub-account": "{}",
             "tech-partner": "AWS",
-            "integration-name": "add-account",
+            "integration-name": "ct-customizations",
             "version": "{}",
             "service": "AWS CloudFormation",
             "install-method": "cloudformation",
-            "function": "move.py",
+            "function": "provisionLWConfig.py",
             "event": "{}",
             "event-data": {}
         }}

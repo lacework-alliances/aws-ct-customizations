@@ -305,15 +305,10 @@ def create_lw_config_cross_account_access_role(lw_account_name, external_id):
                     "Action": "sts:AssumeRole",
                     "Condition": {
                         "StringEquals": {
-                            "sts:ExternalId": {
-                                external_id
-                            }
+                            "sts:ExternalId": external_id
                         }
                     }
                 }
-            ],
-            "ManagedPolicyArns": [
-                "arn:aws:iam::aws:policy/SecurityAudit"
             ]
         })
 
@@ -322,9 +317,14 @@ def create_lw_config_cross_account_access_role(lw_account_name, external_id):
             AssumeRolePolicyDocument=assume_role_policy_document
         )
 
-        attach_role_policy_response = iam.attach_role_policy(
+        iam.attach_role_policy(
             RoleName=lw_account_name + "-laceworkcwsrole-sa",
             PolicyArn=create_policy_response["Policy"]["Arn"]
+        )
+
+        iam.attach_role_policy(
+            RoleName=lw_account_name + "-laceworkcwsrole-sa",
+            PolicyArn="arn:aws:iam::aws:policy/SecurityAudit"
         )
 
         return create_role_response["Role"]["Arn"]
@@ -341,6 +341,11 @@ def delete_lw_config_cross_account_access_role(lw_account_name, aws_account_id):
         iam.detach_role_policy(
             RoleName=lw_account_name + "-laceworkcwsrole-sa",
             PolicyArn="arn:aws:iam::" + aws_account_id + ":policy/LaceworkCWSPolicy"
+        )
+
+        iam.detach_role_policy(
+            RoleName=lw_account_name + "-laceworkcwsrole-sa",
+            PolicyArn="arn:aws:iam::aws:policy/SecurityAudit"
         )
 
         iam.delete_policy(

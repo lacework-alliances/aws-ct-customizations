@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "This is a CloudFormation template that can add the AWS account to Lacework."
+Description: "This CloudFormation template provisions the Lacework Config Type account using CloudFormation and Lambda. SSM parameters of the same parameter name can be used for some of the values."
 Metadata:
   AWS::CloudFormation::Interface: 
     ParameterGroups:
@@ -19,9 +19,9 @@ Metadata:
       LaceworkURL:
         default: Your Lacework URL
       LaceworkAccessKeyID:
-        default: Lacework Organization Admin Access Key ID
+        default: Lacework Admin Access Key ID
       LaceworkSecretKey:
-        default: Lacework Organization Admin Secret Key
+        default: Lacework Admin Secret Key
       LaceworkAccount:
         default: Lacework Account (Lacework Organization Feature)
       S3BucketName:
@@ -32,29 +32,17 @@ Parameters:
   # basic
   LaceworkURL:
     Type: String
-    Description: "Enter your Lacework URL. ie. account.lacework.net."
-    MinLength: '1'
-    AllowedPattern: '(.+?)\.lacework\.net'
-    ConstraintDescription: "Invalid Lacework URL."
+    Description: "Enter your Lacework URL. ie. account.lacework.net. SSM parameter supported."
   LaceworkAccessKeyID:
     Type: String
-    MinLength: '1'
-    AllowedPattern: '^[-a-zA-Z0-9_]*$'
-    ConstraintDescription: "The Lacework Organization Admin API Access Key ID contains alphanumeric characters and symbols only."
-    Description: "Enter the Lacework API Secret Key ID. See https://support.lacework.com/hc/en-us/articles/360011403853-Generate-API-Access-Keys-and-Tokens."
+    Description: "Enter the Lacework API Secret Key ID. See https://support.lacework.com/hc/en-us/articles/360011403853-Generate-API-Access-Keys-and-Tokens. SSM parameter supported."
   LaceworkSecretKey:
     Type: String
-    NoEcho: true
-    MinLength: '1'
-    AllowedPattern: '^[a-zA-Z0-9_]*$'
-    ConstraintDescription: "The Lacework Organization Admin  API Secret Key contains alphanumeric characters and symbols only."
-    Description: "Enter the Lacework API Secret Key. See https://support.lacework.com/hc/en-us/articles/360011403853-Generate-API-Access-Keys-and-Tokens."
+    Description: "Enter the Lacework API Secret Key. See https://support.lacework.com/hc/en-us/articles/360011403853-Generate-API-Access-Keys-and-Tokens. SSM parameter supported."
 # advanced
   LaceworkAccount:
     Type: String
-    Description: "Add this AWS Account to this Lacework Account."
-    AllowedPattern: '^$|^[a-zA-Z0-9.]+(?:-[a-zA-Z0-9.]+)*$'
-    ConstraintDescription: "Invalid Lacework Account name entered. The tenant name may contain alphanumeric characters and dashes only."
+    Description: "Add this AWS Account to this Lacework Account when the Lacework Organizations feature is enabled."
   S3BucketName:
     Type: String
     Default: lacework-alliances
@@ -62,9 +50,13 @@ Parameters:
     Description: "Enter the S3 bucket for assets. Use this if you want to customize your deployment."
   S3KeyPrefix:
     Type: String
-    Default: lacework-add-acct-cfn
+    Default: lacework-aws-ct-customizations
     MinLength: '1'
     Description: "Enter the S3 key prefix for Cloudformation assets directory. Use this if you want to customize your deployment."
+Conditions:
+  UseLaceworkURL: !Not [!Equals [!Ref "LaceworkURL", ""]]
+  UseLaceworkAccessKeyID: !Not [!Equals [!Ref "LaceworkAccessKeyID", ""]]
+  UseLaceworkSecretKey: !Not [!Equals [!Ref "LaceworkSecretKey", ""]]
 Resources:
   LambdaZipsBucket:
     Type: AWS::S3::Bucket
@@ -177,15 +169,15 @@ Resources:
       Code:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Join ['', [!Ref 'S3KeyPrefix', '/lambda/ProvisionLWConfig.zip']]
-      Handler: move.lambda_handler
+      Handler: provisionLWConfig.lambda_handler
       Runtime: python3.7
       Timeout: 900
       Environment:
         Variables:
-          lacework_url: !Ref LaceworkURL
-          access_key_id: !Ref LaceworkAccessKeyID
-          secret_key: !Ref LaceworkSecretKey
-          lw_account: !Ref LaceworkAccount
+          lacework_url: !If [UseLaceworkURL, !Ref LaceworkURL,  '{{resolve:ssm:LaceworkURL}}']
+          access_key_id: !If [UseLaceworkAccessKeyID, !Ref LaceworkAccessKeyID,  '{{resolve:ssm:LaceworkAccessKeyID}}']
+          secret_key: !If [UseLaceworkSecretKey, !Ref LaceworkSecretKey,  '{{resolve:ssm:LaceworkSecretKey}}']
+          lacework_account: !Ref LaceworkAccount
       Role: !GetAtt ProvisionLWConfigFunctionRole.Arn
 
   ProvisionLWConfigFunctionRole:
@@ -199,10 +191,33 @@ Resources:
             Service: lambda.amazonaws.com
           Action: sts:AssumeRole
       Path: /
+      Policies:
+        - PolicyName: iam-cross-account-role-policies
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: CWAPolicy
+                Effect: Allow
+                Action:
+                  - iam:CreatePolicy
+                  - iam:DeletePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                Resource:
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/LaceworkCWSPolicy'
+              - Sid: CWARole
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                Resource:
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*-laceworkcwsrole-sa'
       ManagedPolicyArns:
       - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
 
-  Move: # this will launch the function and process the accounts.
+  ProvisionLWConfigLaunch: # this will launch the function and process the accounts.
     Type: AWS::CloudFormation::CustomResource
     Properties:
       ServiceToken:

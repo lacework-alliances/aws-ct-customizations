@@ -11,4 +11,11 @@ AWS Control Tower account provisioning using Account Factory.
 ### Lacework Config Type Provisioning
 This CloudFormation template provisions the Lacework Config Type account.
 
+#### CloudFormation Parameters
+The following CloudFormation parameters may be set via SSM parameters instead of specifying as input in the template.
+
+- LaceworkURL: _ssm:LaceworkURL_
+- LaceworkAccessKeyID: _ssm:LaceworkAccessKeyID_
+- LaceworkSecretKey: _ssm:LaceworkSecretKey_
+
 

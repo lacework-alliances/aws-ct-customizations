@@ -13,6 +13,7 @@ clean:
 	rm $(DIST_DIR)/$(FUNCTION).zip || true
 
 build: clean
+	pip install --upgrade pip
 	mkdir -p build
 	cp ../common/* build
 	buildid=$$(git describe --all --long | cut -d "/" -f 2); \
