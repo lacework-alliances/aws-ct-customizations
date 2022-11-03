@@ -112,8 +112,8 @@ def delete(event, context):
     aws_account_id = context.invoked_function_arn.split(":")[4]
 
     send_honeycomb_event(HONEY_API_KEY, DATASET, BUILD_VERSION, lacework_account_name, "delete started", "")
+    delete_lw_config_cross_account_access_role(lacework_account_name, aws_account_id)
     try:
-        delete_lw_config_cross_account_access_role(lacework_account_name, aws_account_id)
         access_token = setup_initial_access_token(lacework_url, access_key_id, secret_key)
         delete_lw_cloud_account(CONFIG_NAME_PREFIX + aws_account_id, lacework_url, lacework_account, access_token)
     except Exception as delete_exception:
