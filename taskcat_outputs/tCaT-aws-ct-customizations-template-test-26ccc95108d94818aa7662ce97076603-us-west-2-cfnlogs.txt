@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+Region: us-west-2
+StackName: tCaT-aws-ct-customizations-template-test-26ccc95108d94818aa7662ce97076603
+*****************************************************************************
+ResourceStatusReason:  
+Stack launch was successful
+*****************************************************************************
+*****************************************************************************
+Events:  
+TimeStamp                         ResourceStatus      ResourceType                         LogicalResourceId                                                          ResourceStatusReason
+--------------------------------  ------------------  -----------------------------------  -------------------------------------------------------------------------  ---------------------------
+2022-11-03 13:16:11.086000+00:00  CREATE_COMPLETE     AWS::CloudFormation::Stack           tCaT-aws-ct-customizations-template-test-26ccc95108d94818aa7662ce97076603
+2022-11-03 13:16:10.054000+00:00  CREATE_COMPLETE     AWS::CloudFormation::CustomResource  ProvisionLWConfigLaunch
+2022-11-03 13:16:09.677000+00:00  CREATE_IN_PROGRESS  AWS::CloudFormation::CustomResource  ProvisionLWConfigLaunch                                                    Resource creation Initiated
+2022-11-03 13:16:06.054000+00:00  CREATE_IN_PROGRESS  AWS::CloudFormation::CustomResource  ProvisionLWConfigLaunch
+2022-11-03 13:16:04.094000+00:00  CREATE_COMPLETE     AWS::Lambda::Function                ProvisionLWConfigFunction
+2022-11-03 13:15:57.669000+00:00  CREATE_IN_PROGRESS  AWS::Lambda::Function                ProvisionLWConfigFunction                                                  Resource creation Initiated
+2022-11-03 13:15:55.599000+00:00  CREATE_IN_PROGRESS  AWS::Lambda::Function                ProvisionLWConfigFunction
+2022-11-03 13:15:54.122000+00:00  CREATE_COMPLETE     Custom::CopyZips                     CopyZips
+2022-11-03 13:15:53.680000+00:00  CREATE_IN_PROGRESS  Custom::CopyZips                     CopyZips                                                                   Resource creation Initiated
+2022-11-03 13:15:49.178000+00:00  CREATE_IN_PROGRESS  Custom::CopyZips                     CopyZips
+2022-11-03 13:15:47.691000+00:00  CREATE_COMPLETE     AWS::Lambda::Function                CopyZipsFunction
+2022-11-03 13:15:41.867000+00:00  CREATE_IN_PROGRESS  AWS::Lambda::Function                CopyZipsFunction                                                           Resource creation Initiated
+2022-11-03 13:15:39.806000+00:00  CREATE_IN_PROGRESS  AWS::Lambda::Function                CopyZipsFunction
+2022-11-03 13:15:37.996000+00:00  CREATE_COMPLETE     AWS::IAM::Role                       CopyZipsRole
+2022-11-03 13:15:14.523000+00:00  CREATE_COMPLETE     AWS::IAM::Role                       ProvisionLWConfigFunctionRole
+2022-11-03 13:15:13.133000+00:00  CREATE_IN_PROGRESS  AWS::IAM::Role                       CopyZipsRole                                                               Resource creation Initiated
+2022-11-03 13:15:12.526000+00:00  CREATE_IN_PROGRESS  AWS::IAM::Role                       CopyZipsRole
+2022-11-03 13:15:10.950000+00:00  CREATE_COMPLETE     AWS::S3::Bucket                      LambdaZipsBucket
+2022-11-03 13:14:49.913000+00:00  CREATE_IN_PROGRESS  AWS::S3::Bucket                      LambdaZipsBucket                                                           Resource creation Initiated
+2022-11-03 13:14:49.417000+00:00  CREATE_IN_PROGRESS  AWS::IAM::Role                       ProvisionLWConfigFunctionRole                                              Resource creation Initiated
+2022-11-03 13:14:48.851000+00:00  CREATE_IN_PROGRESS  AWS::IAM::Role                       ProvisionLWConfigFunctionRole
+2022-11-03 13:14:48.564000+00:00  CREATE_IN_PROGRESS  AWS::S3::Bucket                      LambdaZipsBucket
+2022-11-03 13:14:45.757000+00:00  CREATE_IN_PROGRESS  AWS::CloudFormation::Stack           tCaT-aws-ct-customizations-template-test-26ccc95108d94818aa7662ce97076603  Transformation succeeded
+2022-11-03 13:14:43.753000+00:00  CREATE_IN_PROGRESS  AWS::CloudFormation::Stack           tCaT-aws-ct-customizations-template-test-26ccc95108d94818aa7662ce97076603  User Initiated
+*****************************************************************************
+-----------------------------------------------------------------------------
+Tested on: Thursday, 03. November 2022 09:16AM
+-----------------------------------------------------------------------------
+

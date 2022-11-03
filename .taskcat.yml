@@ -1,0 +1,12 @@
+project:
+  name: aws-ct-customizations
+  regions:
+    - us-west-2
+tests:
+  template-test:
+    template: ./templates/provision-lacework-config.template.yml
+    parameters:
+      LaceworkURL: 'lwintjefffry.lacework.net'
+      LaceworkAccessKeyID: '$[taskcat_random-string]'
+      LaceworkSecretKey: '$[taskcat_genpass_8A]'
+      LaceworkAccount: ''
