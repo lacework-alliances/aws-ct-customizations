@@ -167,6 +167,7 @@ Resources:
     Properties:
       ServiceToken:
         !GetAtt ProvisionLWConfigFunction.Arn
+      FunctionName: !Ref ProvisionLWConfigFunction
 
   ProvisionLWConfigFunction:
     Type: AWS::Lambda::Function
